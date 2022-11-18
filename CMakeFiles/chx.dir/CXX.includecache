@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/chx/workspace/chx/log.cc
+/home/chx/Git/LogSystem/chx/log.cc
 log.h
-/home/chx/workspace/chx/log.h
+/home/chx/Git/LogSystem/chx/log.h
 map
 -
 iostream
@@ -16,7 +16,7 @@ iostream
 time.h
 -
 
-/home/chx/workspace/chx/log.h
+/home/chx/Git/LogSystem/chx/log.h
 string
 -
 stdint.h
@@ -38,7 +38,25 @@ stdarg.h
 map
 -
 singleton.h
-/home/chx/workspace/chx/singleton.h
+/home/chx/Git/LogSystem/chx/singleton.h
 
-/home/chx/workspace/chx/singleton.h
+/home/chx/Git/LogSystem/chx/singleton.h
+
+/home/chx/Git/LogSystem/chx/util.cc
+util.h
+/home/chx/Git/LogSystem/chx/util.h
+
+/home/chx/Git/LogSystem/chx/util.h
+stdio.h
+-
+pthread.h
+-
+sys/types.h
+-
+sys/syscall.h
+-
+unistd.h
+-
+stdint.h
+-
 

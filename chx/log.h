@@ -188,7 +188,7 @@ private:
 };
 
 //每天产生一个日志文件
-class DailyRollingFileAppender : public FileLogAppender {
+class DailyRollingFileAppender : public LogAppender {
 public:
     typedef std::shared_ptr<DailyRollingFileAppender> ptr;
     DailyRollingFileAppender(const std::string& filename, const std::string& format);

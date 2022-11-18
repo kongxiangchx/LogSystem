@@ -231,6 +231,7 @@ void Logger::fatal(LogEvent::ptr event) {
 
 FileLogAppender::FileLogAppender(const std::string& filename) 
     : m_filename(filename) {
+    std::cout<<m_filename<<"asas"<<std::endl;
     reopen();
 }
 

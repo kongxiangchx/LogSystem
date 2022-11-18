@@ -9,9 +9,8 @@
 int main(int argc, char** argv) {
     chx::Logger::ptr logger(new chx::Logger);
     logger->addAppender(chx::LogAppender::ptr(new chx::StdoutLogAppender));
-    new chx::DailyRollingFileAppender("./log.txt","%Y-%m-%d");
-    std::cout<<"asas"<<std::endl;
-    // chx::DailyRollingFileAppender::ptr file_appender(new chx::DailyRollingFileAppender("./log.txt","%Y-%m-%d"));
+    std::cout<<"abcd";
+    // chx::FileLogAppender::ptr file_appender(new chx::FileLogAppender("./log.txt"));
     
     // chx::LogFormatter::ptr fmt(new chx::LogFormatter("%d%T%p%T%m%n"));
     // file_appender->setFormatter(fmt);
