@@ -248,6 +248,37 @@ bool FileLogAppender::reopen() {
     return !!m_filestream;
 }
 
+DailyLogAppender::DailyLogAppender(const std::string& filename, const std::string& format = "%Y-%m-%d") 
+    : m_filename(filename),
+    m_format(format){
+    setFileName();
+    reopen();
+}
+
+void DailyLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
+    if(level >= m_level) {
+        m_filestream << m_formatter->format(logger, level, event);
+    }
+}
+
+bool DailyLogAppender::reopen() {
+    if(m_filestream) {
+        m_filestream.close();
+    }
+    m_filestream.open(m_filename, std::ios::app);
+    return !!m_filestream;
+}
+
+void DailyLogAppender::setFileName() {
+    struct tm tm;
+    time_t t = time(0);
+    localtime_r(&t, &tm);    //线程安全
+    char buf[64];
+    strftime(buf, sizeof(buf), m_format.c_str(), &tm);
+    m_filename.append(".");
+    m_filename.append(buf);
+}
+
 void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
     if(level >= m_level) {
         std::string str = m_formatter->format(logger, level, event);

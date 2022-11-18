@@ -41,6 +41,8 @@ sys/types.h
 -
 sys/syscall.h
 -
+sys/stat.h
+-
 unistd.h
 -
 stdint.h

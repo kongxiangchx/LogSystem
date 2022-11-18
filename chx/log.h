@@ -187,6 +187,22 @@ private:
     std::ofstream m_filestream;
 };
 
+//每天产生一个日志文件
+class DailyLogAppender : public LogAppender {
+public:
+    typedef std::shared_ptr<DailyLogAppender> ptr;
+    DailyLogAppender(const std::string& filename, const std::string& format);
+    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+    //重新打开文件，文件打开成功返回true
+    bool reopen();
+
+    void setFileName();
+private:
+    std::string m_filename;
+    std::string m_format;
+    std::ofstream m_filestream;
+};
+
 class LoggerManager {
 public:
     LoggerManager();

@@ -42,21 +42,3 @@ singleton.h
 
 /home/chx/Git/LogSystem/chx/singleton.h
 
-/home/chx/Git/LogSystem/chx/util.cc
-util.h
-/home/chx/Git/LogSystem/chx/util.h
-
-/home/chx/Git/LogSystem/chx/util.h
-stdio.h
--
-pthread.h
--
-sys/types.h
--
-sys/syscall.h
--
-unistd.h
--
-stdint.h
--
-
