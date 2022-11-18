@@ -1,0 +1,6 @@
+2022-11-17 19:26:43	ERROR	test macro error
+2022-11-17 19:26:43	ERROR	test macro fmt error aa
+2022-11-18 16:18:43	ERROR	test macro error
+2022-11-18 16:18:43	ERROR	test macro fmt error aa
+2022-11-18 16:28:16	ERROR	test macro error
+2022-11-18 16:28:16	ERROR	test macro fmt error aa
