@@ -187,6 +187,17 @@ private:
     std::ofstream m_filestream;
 };
 
+//每天产生一个日志文件
+class DailyRollingFileAppender : public FileLogAppender {
+public:
+    typedef std::shared_ptr<DailyRollingFileAppender> ptr;
+    DailyRollingFileAppender(const std::string& filename, const std::string& format);
+    std::string getFileName(const std::string& filename, const std::string& format);
+private:
+    std::string m_filename;
+    std::ofstream m_filestream;
+}
+
 class LoggerManager {
 public:
     LoggerManager();

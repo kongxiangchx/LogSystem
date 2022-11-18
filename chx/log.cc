@@ -248,6 +248,24 @@ bool FileLogAppender::reopen() {
     return !!m_filestream;
 }
 
+DailyRollingFileAppender::DailyRollingFileAppender(const std::string& filename, const std::string& format) {
+    std::cout<<filename<<std::endl;
+    m_filename = getFileName(filename, format);
+    std::cout<<m_filename<<endl;
+    this->reopen();
+}
+
+std::string DailyRollingFileAppender::getFileName(const std::string& filename, const std::string& format) {
+    struct tm tm;
+    time_t time = time(0);
+    localtime_r(&time, &tm);    //线程安全
+    char buf[64];
+    strftime(buf, sizeof(buf), format.c_str(), &tm);
+    std::string name = filename;
+    name.append(buf);
+    return name;
+}
+
 void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
     if(level >= m_level) {
         std::string str = m_formatter->format(logger, level, event);
