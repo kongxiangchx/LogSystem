@@ -9,9 +9,9 @@
 int main(int argc, char** argv) {
     chx::Logger::ptr logger(new chx::Logger);
     logger->addAppender(chx::LogAppender::ptr(new chx::StdoutLogAppender));
+    //logger->addAppender(chx::LogAppender::ptr(new chx::FileLogAppender("./log.txt")));
 
-    //chx::FileLogAppender::ptr file_appender(new chx::FileLogAppender("./log.txt"));
-    chx::DailyLogAppender::ptr file_appender(new chx::DailyLogAppender("./log"));
+    chx::FileLogAppender::ptr file_appender(new chx::FileLogAppender("./log.txt"));
     
     chx::LogFormatter::ptr fmt(new chx::LogFormatter("%d%T%p%T%m%n"));
     file_appender->setFormatter(fmt);
@@ -26,12 +26,12 @@ int main(int argc, char** argv) {
     CHX_LOG_INFO(logger) << "test macro";
     CHX_LOG_ERROR(logger) << "test macro error";
 
-    CHX_LOG_FMT_ERROR(logger, "test macro fmt error %s", "aa");
+    CHX_LOG_FMT_ERROR(logger, "test macro fmt error %s, %d", "aa", 3);
 
     auto l = chx::LoggerMgr::GetInstance()->getLogger("xx");
     CHX_LOG_INFO(l) << "xxx";
 
-    std::cout<<"------------"<<std::endl;
-    std::cout<<chx::GetFileSize("./log.txt")<<std::endl;
+    std::stringstream m_ss;
+    m_ss << "asas" << std::endl;
     return 0;
 }

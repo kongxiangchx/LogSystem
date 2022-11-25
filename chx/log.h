@@ -11,6 +11,7 @@
 #include <functional>
 #include <stdarg.h>
 #include <map>
+#include "util.h"
 #include "singleton.h"
 
 #define CHX_LOG_LEVEL(logger, level) \
@@ -37,9 +38,15 @@
 #define CHX_LOG_FMT_ERROR(logger, fmt, ...) CHX_LOG_FMT_LEVEL(logger, chx::LogLevel::ERROR, fmt, __VA_ARGS__)
 #define CHX_LOG_FMT_FATAL(logger, fmt, ...) CHX_LOG_FMT_LEVEL(logger, chx::LogLevel::FATAL, fmt, __VA_ARGS__)
 
+#define CHX_LOG_ROOT() chx::LoggerMgr::GetInstance()->getRoot()
+#define CHX_LOG_NAME(name) chx::LoggerMgr::GetInstance()->getLogger(name)
+
+
 namespace chx {
 
 class Logger;
+class LoggerManager;
+
 //日志级别
 class LogLevel {
 public:
@@ -141,6 +148,7 @@ protected:
 
 //日志器
 class Logger : public std::enable_shared_from_this<Logger> {
+friend class LoggerManager;
 public:
     typedef std::shared_ptr<Logger> ptr;
 
@@ -165,6 +173,7 @@ private:
     LogLevel::Level m_level;                            //日志级别
     std::list<LogAppender::ptr> m_appenders;            //Appender集合
     LogFormatter::ptr m_formatter;
+    Logger::ptr m_root;
 };
 
 //输出到控制台的Appender
@@ -187,28 +196,13 @@ private:
     std::ofstream m_filestream;
 };
 
-//每天产生一个日志文件
-class DailyLogAppender : public LogAppender {
-public:
-    typedef std::shared_ptr<DailyLogAppender> ptr;
-    DailyLogAppender(const std::string& filename, const std::string& format);
-    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
-    //重新打开文件，文件打开成功返回true
-    bool reopen();
-
-    void setFileName();
-private:
-    std::string m_filename;
-    std::string m_format;
-    std::ofstream m_filestream;
-};
-
 class LoggerManager {
 public:
     LoggerManager();
     Logger::ptr getLogger(const std::string& name);
 
     void init();
+    Logger::ptr getRoot() const { return m_root; }
 private:
     std::map<std::string, Logger::ptr> m_loggers;
     Logger::ptr m_root;

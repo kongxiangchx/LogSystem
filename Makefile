@@ -51,10 +51,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/chx/Git/LogSystem
+CMAKE_SOURCE_DIR = /home/chx/workspace
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/chx/Git/LogSystem
+CMAKE_BINARY_DIR = /home/chx/workspace
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -83,9 +83,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chx/Git/LogSystem/CMakeFiles /home/chx/Git/LogSystem/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/chx/workspace/CMakeFiles /home/chx/workspace/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chx/Git/LogSystem/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/chx/workspace/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -114,17 +114,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test
+# Target rules for targets named test_config
 
 # Build rule for target.
-test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test
-.PHONY : test
+test_config: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_config
+.PHONY : test_config
 
 # fast build rule for target.
-test/fast:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-.PHONY : test/fast
+test_config/fast:
+	$(MAKE) -f CMakeFiles/test_config.dir/build.make CMakeFiles/test_config.dir/build
+.PHONY : test_config/fast
 
 #=============================================================================
 # Target rules for targets named chx
@@ -138,6 +138,33 @@ chx: cmake_check_build_system
 chx/fast:
 	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/build
 .PHONY : chx/fast
+
+chx/config.o: chx/config.cc.o
+
+.PHONY : chx/config.o
+
+# target to build an object file
+chx/config.cc.o:
+	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/config.cc.o
+.PHONY : chx/config.cc.o
+
+chx/config.i: chx/config.cc.i
+
+.PHONY : chx/config.i
+
+# target to preprocess a source file
+chx/config.cc.i:
+	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/config.cc.i
+.PHONY : chx/config.cc.i
+
+chx/config.s: chx/config.cc.s
+
+.PHONY : chx/config.s
+
+# target to generate assembly for a file
+chx/config.cc.s:
+	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/config.cc.s
+.PHONY : chx/config.cc.s
 
 chx/log.o: chx/log.cc.o
 
@@ -193,32 +220,32 @@ chx/util.cc.s:
 	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/util.cc.s
 .PHONY : chx/util.cc.s
 
-tests/test.o: tests/test.cc.o
+tests/test_config.o: tests/test_config.cc.o
 
-.PHONY : tests/test.o
+.PHONY : tests/test_config.o
 
 # target to build an object file
-tests/test.cc.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cc.o
-.PHONY : tests/test.cc.o
+tests/test_config.cc.o:
+	$(MAKE) -f CMakeFiles/test_config.dir/build.make CMakeFiles/test_config.dir/tests/test_config.cc.o
+.PHONY : tests/test_config.cc.o
 
-tests/test.i: tests/test.cc.i
+tests/test_config.i: tests/test_config.cc.i
 
-.PHONY : tests/test.i
+.PHONY : tests/test_config.i
 
 # target to preprocess a source file
-tests/test.cc.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cc.i
-.PHONY : tests/test.cc.i
+tests/test_config.cc.i:
+	$(MAKE) -f CMakeFiles/test_config.dir/build.make CMakeFiles/test_config.dir/tests/test_config.cc.i
+.PHONY : tests/test_config.cc.i
 
-tests/test.s: tests/test.cc.s
+tests/test_config.s: tests/test_config.cc.s
 
-.PHONY : tests/test.s
+.PHONY : tests/test_config.s
 
 # target to generate assembly for a file
-tests/test.cc.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cc.s
-.PHONY : tests/test.cc.s
+tests/test_config.cc.s:
+	$(MAKE) -f CMakeFiles/test_config.dir/build.make CMakeFiles/test_config.dir/tests/test_config.cc.s
+.PHONY : tests/test_config.cc.s
 
 # Help Target
 help:
@@ -228,17 +255,20 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... test"
+	@echo "... test_config"
 	@echo "... chx"
+	@echo "... chx/config.o"
+	@echo "... chx/config.i"
+	@echo "... chx/config.s"
 	@echo "... chx/log.o"
 	@echo "... chx/log.i"
 	@echo "... chx/log.s"
 	@echo "... chx/util.o"
 	@echo "... chx/util.i"
 	@echo "... chx/util.s"
-	@echo "... tests/test.o"
-	@echo "... tests/test.i"
-	@echo "... tests/test.s"
+	@echo "... tests/test_config.o"
+	@echo "... tests/test_config.i"
+	@echo "... tests/test_config.s"
 .PHONY : help
 
 

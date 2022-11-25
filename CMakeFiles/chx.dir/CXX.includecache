@@ -6,9 +6,41 @@
 
 #IncludeRegexTransform: 
 
-/home/chx/Git/LogSystem/chx/log.cc
+/home/chx/workspace/chx/config.cc
+config.h
+/home/chx/workspace/chx/config.h
+
+/home/chx/workspace/chx/config.h
+memory
+-
+string
+-
+sstream
+-
+boost/lexical_cast.hpp
+-
+yaml-cpp/yaml.h
+-
 log.h
-/home/chx/Git/LogSystem/chx/log.h
+/home/chx/workspace/chx/log.h
+vector
+-
+list
+-
+map
+-
+set
+-
+unordered_map
+-
+unordered_set
+-
+functional
+-
+
+/home/chx/workspace/chx/log.cc
+log.h
+/home/chx/workspace/chx/log.h
 map
 -
 iostream
@@ -16,7 +48,7 @@ iostream
 time.h
 -
 
-/home/chx/Git/LogSystem/chx/log.h
+/home/chx/workspace/chx/log.h
 string
 -
 stdint.h
@@ -37,8 +69,24 @@ stdarg.h
 -
 map
 -
+util.h
+/home/chx/workspace/chx/util.h
 singleton.h
-/home/chx/Git/LogSystem/chx/singleton.h
+/home/chx/workspace/chx/singleton.h
 
-/home/chx/Git/LogSystem/chx/singleton.h
+/home/chx/workspace/chx/singleton.h
+
+/home/chx/workspace/chx/util.h
+stdio.h
+-
+pthread.h
+-
+sys/types.h
+-
+sys/syscall.h
+-
+unistd.h
+-
+stdint.h
+-
 

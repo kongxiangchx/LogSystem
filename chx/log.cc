@@ -81,7 +81,7 @@ class NameFormatItem : public LogFormatter::FormatItem {
 public:
     NameFormatItem(const std::string& str = "") {}
     void format(std::ostream& os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override {
-        os << logger->getName();
+        os << event->getLogger()->getName();
     }
 };
 
@@ -203,9 +203,14 @@ void Logger::delAppender(LogAppender::ptr appender) {
 void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
     if(level >= m_level) {
         auto self = shared_from_this();
-        for(auto& i : m_appenders) {
-            i->log(self, level, event);
+        if(!m_appenders.empty()) {
+            for(auto& i : m_appenders) {
+                i->log(self, level, event);
+            }
         }
+        else if(m_root) {
+            m_root->log(level, event);
+        }       
     }
 }
 
@@ -246,37 +251,6 @@ bool FileLogAppender::reopen() {
     }
     m_filestream.open(m_filename, std::ios::app);
     return !!m_filestream;
-}
-
-DailyLogAppender::DailyLogAppender(const std::string& filename, const std::string& format = "%Y-%m-%d") 
-    : m_filename(filename),
-    m_format(format){
-    setFileName();
-    reopen();
-}
-
-void DailyLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
-    if(level >= m_level) {
-        m_filestream << m_formatter->format(logger, level, event);
-    }
-}
-
-bool DailyLogAppender::reopen() {
-    if(m_filestream) {
-        m_filestream.close();
-    }
-    m_filestream.open(m_filename, std::ios::app);
-    return !!m_filestream;
-}
-
-void DailyLogAppender::setFileName() {
-    struct tm tm;
-    time_t t = time(0);
-    localtime_r(&t, &tm);    //线程安全
-    char buf[64];
-    strftime(buf, sizeof(buf), m_format.c_str(), &tm);
-    m_filename.append(".");
-    m_filename.append(buf);
 }
 
 void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
@@ -419,11 +393,35 @@ LoggerManager::LoggerManager() {
     m_root.reset(new Logger);
 
     m_root->addAppender(LogAppender::ptr(new StdoutLogAppender));
+    init();
 }
 Logger::ptr LoggerManager::getLogger(const std::string& name) {
     auto it = m_loggers.find(name);
-    return it == m_loggers.end() ? m_root : it->second;
+    if(it != m_loggers.end()) {
+        return it->second;
+    }
+    Logger::ptr logger(new Logger(name));
+    logger->m_root = m_root;
+    m_loggers[name] = logger;
+    return logger;
 }
 
+struct LogAppenderDefine {
+    int type = 0;   //1 File, 2 Stdout
+    LogLevel::Level level = LogLevel::UNKNOW;
+    std::string formatter;
+    std::string file;
+};
+
+struct LogDefine {
+    std::string name;
+    LogLevel::Level level = LogLevel::UNKNOW;
+    std::string formatter;
+    std::vector<LogAppenderDefine> appenders;
+};
+
+void LoggerManager::init() {
+
+}
 
 }
