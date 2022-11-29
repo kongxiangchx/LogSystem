@@ -3,6 +3,7 @@
 
 CMakeFiles/test_config.dir/tests/test_config.cc.o
  /home/chx/workspace/chx/config.h
+ /home/chx/workspace/chx/lock.h
  /home/chx/workspace/chx/log.h
  /home/chx/workspace/chx/singleton.h
  /home/chx/workspace/chx/util.h

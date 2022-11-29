@@ -1,8 +1,10 @@
 #include "../chx/config.h"
 #include "../chx/log.h"
+#include "../chx/lock.h"
 #include "yaml-cpp/yaml.h"
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 #if 0
 chx::ConfigVar<int>::ptr g_int_value_config =
@@ -126,7 +128,7 @@ void test_config() {
 }
 
 #endif
-
+#if 0
 class Person {
 public:
     Person() {};
@@ -196,7 +198,7 @@ void test_class() {
         CHX_LOG_INFO(CHX_LOG_ROOT()) << prefix << ": size=" << m.size();    \
     }
 
-    g_person->addListener(10, [](const Person& old_value, const Person& new_value) {
+    g_person->addListener([](const Person& old_value, const Person& new_value) {
         CHX_LOG_INFO(CHX_LOG_ROOT()) << "old_value=" << old_value.toString()
                 << " new_value=" << new_value.toString();
     });
@@ -212,10 +214,37 @@ void test_class() {
     XX_PM(g_person_map, "class.map after");
     CHX_LOG_INFO(CHX_LOG_ROOT()) << "after: " << g_person_vec_map->toString();
 }
+#endif
+static chx::Logger::ptr system_log = CHX_LOG_NAME("system");
+void test_log() {
+    YAML::Node root = YAML::LoadFile("/home/chx/workspace/bin/conf/log.yml");
+    chx::Config::LoadFromYaml(root);
+}
+
+void fun() {
+    while(true) {
+        CHX_LOG_INFO(system_log) << "test";
+    }
+}
 
 int main(int argc, char** argv) {
-    test_class();
-    //CHX_LOG_INFO(CHX_LOG_ROOT()) << g_int_value_config->getValue();
-    //CHX_LOG_INFO(CHX_LOG_ROOT()) << g_int_value_config->toString();
+    test_log();
+    // std::thread thread1(fun);
+    // std::thread thread2(fun);
+    // std::thread thread3(fun);
+    // std::thread thread4(fun);
+
+    // thread1.join();
+    // thread2.join();
+    // thread3.join();
+    // thread4.join();
+    chx::Logger::ptr logger_xx = CHX_LOG_NAME("xx");
+
+    chx::Logger::ptr logger(new chx::Logger("xx"));
+    logger->addAppender(chx::LogAppender::ptr(new chx::FileLogAppender("log_xx.txt")));
+
+
+    CHX_LOG_INFO(logger_xx) << "test loger_xx";
+    CHX_LOG_INFO(logger) << "test loger";
     return 0;
 }

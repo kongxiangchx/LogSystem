@@ -2,6 +2,8 @@
 #include <map>
 #include <iostream>
 #include <time.h>
+#include "config.h"
+#include "lock.h"
 
 namespace chx {
 
@@ -22,6 +24,26 @@ const char* LogLevel::ToString(LogLevel::Level level) {
         return "UNKNOW";
     }
     return "UNKNOW";
+}
+
+LogLevel::Level LogLevel::FromString(const std::string& str) {
+#define XX(level, v) \
+    if(str == #v) {  \
+        return LogLevel::level; \
+    }
+    XX(DEBUG, debug);
+    XX(INFO, info);
+    XX(WARN, warn);
+    XX(ERROR, error);
+    XX(FATAL, fatal);
+
+    XX(DEBUG, DEBUG);
+    XX(INFO, INFO);
+    XX(WARN, WARN);
+    XX(ERROR, ERROR);
+    XX(FATAL, FATAL);
+    return LogLevel::UNKNOW;
+#undef XX
 }
 
 LogEventWrap::LogEventWrap(LogEvent::ptr e) 
@@ -53,6 +75,22 @@ void LogEvent::format(const char* fmt, va_list al) {
     }
 }
 
+void LogAppender::setFormatter(LogFormatter::ptr val) {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    m_formatter = val;
+    if(m_formatter) {
+        m_hasFormatter = true;
+    }
+    else {
+        m_hasFormatter = false;
+    }
+}
+
+LogFormatter::ptr LogAppender::getFormatter() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    return m_formatter;
+}
+
 class MessageFormatItem : public LogFormatter::FormatItem {
 public:
     MessageFormatItem(const std::string& str = "") {}
@@ -82,6 +120,7 @@ public:
     NameFormatItem(const std::string& str = "") {}
     void format(std::ostream& os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override {
         os << event->getLogger()->getName();
+        //os << logger->getName();
     }
 };
 
@@ -185,13 +224,66 @@ Logger::Logger(const std::string& name)
     m_formatter.reset(new LogFormatter("%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%T%f:%l%T%m%n"));
 }
 
+std::string Logger::toYamlString() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    YAML::Node node;
+    node["name"] = m_name;
+    if(m_level != LogLevel::UNKNOW) {
+        node["level"] = LogLevel::ToString(m_level);
+    }
+    if(m_formatter) {
+        node["formatter"] = m_formatter->getPattern();
+    }
+
+    for(auto& i : m_appenders) {
+        node["appenders"].push_back(YAML::Load(i->toYamlString()));
+    }
+
+    std::stringstream ss;
+    ss << node;
+    return ss.str();
+}
+
+void Logger::setFormatter(LogFormatter::ptr val) {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    m_formatter = val;
+
+    for(auto& i : m_appenders) {
+        SpinLock::SpinLockGuard guard_i(i->m_spinlock);
+        if(!i->m_hasFormatter) {
+            i->m_formatter = m_formatter;
+        }
+    }
+}
+
+void Logger::setFormatter(const std::string& val) {
+    chx::LogFormatter::ptr new_val(new chx::LogFormatter(val));
+    if(new_val->isError()) {
+        std::cout << "Logger setFormatter name=" << m_name
+                  << " value=" << val << " invalid formatter"
+                                      << std::endl;
+        return ;
+    }
+    //m_formatter = new_val;
+    setFormatter(new_val);
+}
+
+LogFormatter::ptr Logger::getFormatter() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    return m_formatter;
+}
+
 void Logger::addAppender(LogAppender::ptr appender) {
+    SpinLock::SpinLockGuard guard(m_spinlock);
     if(!appender->getFormatter()) {
-        appender->setFormatter(m_formatter);
+        SpinLock::SpinLockGuard guard_i(appender->m_spinlock);
+        appender->m_formatter = m_formatter;
     }
     m_appenders.push_back(appender);
 }
+
 void Logger::delAppender(LogAppender::ptr appender) {
+    SpinLock::SpinLockGuard guard(m_spinlock);
     for(auto it = m_appenders.begin(); it != m_appenders.end(); ++it) {
         if(*it == appender) {
             m_appenders.erase(it);
@@ -200,9 +292,15 @@ void Logger::delAppender(LogAppender::ptr appender) {
     }
 }
 
+void Logger::clearAppenders() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    m_appenders.clear();
+}
+
 void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
     if(level >= m_level) {
         auto self = shared_from_this();
+        SpinLock::SpinLockGuard guard(m_spinlock);
         if(!m_appenders.empty()) {
             for(auto& i : m_appenders) {
                 i->log(self, level, event);
@@ -241,11 +339,36 @@ FileLogAppender::FileLogAppender(const std::string& filename)
 
 void FileLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
     if(level >= m_level) {
-        m_filestream << m_formatter->format(logger, level, event);
+        uint64_t now = event->getTime();
+        if(now >= (m_lastTime + 3)) {
+            reopen();
+            m_lastTime = now;
+        }
+        SpinLock::SpinLockGuard guard(m_spinlock);
+        if(!m_formatter->format(m_filestream, logger, level, event)) {
+            std::cout << "error" << std::endl;
+        }
     }
 }
 
+std::string FileLogAppender::toYamlString() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    YAML::Node node;
+    node["type"] = "FileLogAppender";
+    node["file"] = m_filename;
+    if(m_level != LogLevel::UNKNOW) {
+        node["level"] = LogLevel::ToString(m_level);
+    }
+    if(m_hasFormatter && m_formatter) {
+        node["formatter"] = m_formatter->getPattern();
+    }
+    std::stringstream ss;
+    ss << node;
+    return ss.str();
+}
+
 bool FileLogAppender::reopen() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
     if(m_filestream) {
         m_filestream.close();
     }
@@ -255,9 +378,24 @@ bool FileLogAppender::reopen() {
 
 void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
     if(level >= m_level) {
-        std::string str = m_formatter->format(logger, level, event);
-        std::cout << str;
+        SpinLock::SpinLockGuard guard(m_spinlock);
+        m_formatter->format(std::cout, logger, level, event);
     }
+}
+
+std::string StdoutLogAppender::toYamlString() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    YAML::Node node;
+    node["type"] = "StdoutLogAppender";
+    if(m_level != LogLevel::UNKNOW) {
+        node["level"] = LogLevel::ToString(m_level);
+    }
+    if(m_hasFormatter && m_formatter) {
+        node["formatter"] = m_formatter->getPattern();
+    }
+    std::stringstream ss;
+    ss << node;
+    return ss.str();
 }
 
 LogFormatter::LogFormatter(const std::string& pattern) 
@@ -271,6 +409,13 @@ std::string LogFormatter::format(std::shared_ptr<Logger> logger, LogLevel::Level
         i->format(ss, logger, level, event);
     }
     return ss.str();
+}
+
+std::ostream& LogFormatter::format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
+    for(auto& i : m_items) {
+        i->format(ofs, logger, level, event);
+    }
+    return ofs;
 }
 
 //%xxx %xxx{xxx} %%
@@ -332,6 +477,7 @@ void LogFormatter::init() {
             i = n;
         } else if(fmt_status == 1) {
             std::cout << "pattern parse error: " << m_pattern << "-" << m_pattern.substr(i) << std::endl;
+            m_error = true;
             vec.push_back(std::make_tuple("<<pattern_error>>", fmt, 0));
         } else if(fmt_status == 2) {
             if(!nstr.empty()) {
@@ -380,6 +526,7 @@ void LogFormatter::init() {
             auto it = s_format_items.find(std::get<0>(i));
             if(it == s_format_items.end()) {
                 m_items.push_back(FormatItem::ptr(new StringFormatItem("<<error_format %" + std::get<0>(i) + ">")));
+                m_error = true;
             }
             else {
                 m_items.push_back(it->second(std::get<1>(i)));
@@ -391,11 +538,15 @@ void LogFormatter::init() {
 
 LoggerManager::LoggerManager() {
     m_root.reset(new Logger);
-
     m_root->addAppender(LogAppender::ptr(new StdoutLogAppender));
+
+    m_loggers[m_root->m_name] = m_root;
+
     init();
 }
+
 Logger::ptr LoggerManager::getLogger(const std::string& name) {
+    SpinLock::SpinLockGuard guard(m_spinlock);
     auto it = m_loggers.find(name);
     if(it != m_loggers.end()) {
         return it->second;
@@ -411,6 +562,13 @@ struct LogAppenderDefine {
     LogLevel::Level level = LogLevel::UNKNOW;
     std::string formatter;
     std::string file;
+
+    bool operator == (const LogAppenderDefine& oth ) const {
+        return type == oth.type
+            && level == oth.level
+            && formatter == oth.formatter
+            && file == oth.file;
+    }
 };
 
 struct LogDefine {
@@ -418,7 +576,191 @@ struct LogDefine {
     LogLevel::Level level = LogLevel::UNKNOW;
     std::string formatter;
     std::vector<LogAppenderDefine> appenders;
+
+    bool operator == (const LogDefine& oth) const {
+        return name == oth.name
+            && level == oth.level
+            && formatter == oth.formatter
+            && appenders == appenders;
+    }
+
+    bool operator < (const LogDefine& oth) const {
+        return name < oth.name;
+    }
 };
+
+template<>
+class LexicalCast<std::string, LogDefine> {
+public:
+    LogDefine operator()(const std::string& v) {
+        YAML::Node n = YAML::Load(v);
+        LogDefine ld;
+        if(!n["name"].IsDefined()) {
+            std::cout << "log config error: name is null, " << n
+                      << std::endl;
+            throw std::logic_error("log config name is null");
+        }
+        ld.name = n["name"].as<std::string>();
+        ld.level = LogLevel::FromString(n["level"].IsDefined() ? n["level"].as<std::string>() : "");
+        if(n["formatter"].IsDefined()) {
+            ld.formatter = n["formatter"].as<std::string>();
+        }
+
+        if(n["appenders"].IsDefined()) {
+            //std::cout << "==" << ld.name << " = " << n["appenders"].size() << std::endl;
+            for(size_t x = 0; x < n["appenders"].size(); ++x) {
+                auto a = n["appenders"][x];
+                if(!a["type"].IsDefined()) {
+                    std::cout << "log config error: appender type is null, " << a
+                              << std::endl;
+                    continue;
+                }
+                std::string type = a["type"].as<std::string>();
+                LogAppenderDefine lad;
+                if(type == "FileLogAppender") {
+                    lad.type = 1;
+                    if(!a["file"].IsDefined()) {
+                        std::cout << "log config error: fileappender file is null, " << a
+                              << std::endl;
+                        continue;
+                    }
+                    lad.file = a["file"].as<std::string>();
+                    if(a["formatter"].IsDefined()) {
+                        lad.formatter = a["formatter"].as<std::string>();
+                    }
+                } else if(type == "StdoutLogAppender") {
+                    lad.type = 2;
+                    if(a["formatter"].IsDefined()) {
+                        lad.formatter = a["formatter"].as<std::string>();
+                    }
+                } else {
+                    std::cout << "log config error: appender type is invalid, " << a
+                              << std::endl;
+                    continue;
+                }
+
+                ld.appenders.push_back(lad);
+            }
+        }
+        return ld;
+    }
+};
+
+template<>
+class LexicalCast<LogDefine, std::string> {
+public:
+    std::string operator()(const LogDefine& i) {
+        YAML::Node n;
+        n["name"] = i.name;
+        if(i.level != LogLevel::UNKNOW) {
+            n["level"] = LogLevel::ToString(i.level);
+        }
+        if(!i.formatter.empty()) {
+            n["formatter"] = i.formatter;
+        }
+
+        for(auto& a : i.appenders) {
+            YAML::Node na;
+            if(a.type == 1) {
+                na["type"] = "FileLogAppender";
+                na["file"] = a.file;
+            } else if(a.type == 2) {
+                na["type"] = "StdoutLogAppender";
+            }
+            if(a.level != LogLevel::UNKNOW) {
+                na["level"] = LogLevel::ToString(a.level);
+            }
+
+            if(!a.formatter.empty()) {
+                na["formatter"] = a.formatter;
+            }
+
+            n["appenders"].push_back(na);
+        }
+        std::stringstream ss;
+        ss << n;
+        return ss.str();
+    }
+};
+
+chx::ConfigVar<std::set<LogDefine> >::ptr g_log_defines =
+    chx::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
+
+struct LogIniter {
+    LogIniter() {
+        g_log_defines->addListener([](const std::set<LogDefine>& old_value,
+                    const std::set<LogDefine>& new_value) {
+            CHX_LOG_INFO(CHX_LOG_ROOT()) << "on_logger_conf_changed";
+            for(auto& i : new_value) {
+                auto it = old_value.find(i);
+                chx::Logger::ptr logger;
+                if(it == old_value.end()) {
+                    //新增logger
+                    logger = CHX_LOG_NAME(i.name);
+                }
+                else {
+                    if(!(i == *it)) {
+                        //修改的logger
+                        logger = CHX_LOG_NAME(i.name);
+                    }
+                }
+                logger->setLevel(i.level);
+                if(!i.formatter.empty()) {
+                    logger->setFormatter(i.formatter);
+                }
+
+                logger->clearAppenders();
+                for(auto& a : i.appenders) {
+                    chx::LogAppender::ptr ap;
+                    if(a.type == 1) {
+                        ap.reset(new FileLogAppender(a.file));
+                    }
+                    else if(a.type == 2) {
+                        ap.reset(new StdoutLogAppender);
+                    }
+                    ap->setLevel(a.level);
+                    if(!a.formatter.empty()) {
+                        LogFormatter::ptr fmt(new LogFormatter(a.formatter));
+                        if(!fmt->isError()) {
+                            ap->setFormatter(fmt);
+                        }
+                        else {
+                            std::cout << "log.name=" << i.name <<" appender type=" << a.type
+                                      << " formatter=" << a.formatter << " is invalid" << std::endl;
+                        }
+                    }
+
+                    logger->addAppender(ap);
+                }
+            }
+            
+            for(auto& i : old_value) {
+                auto it = new_value.find(i);
+                if(it == new_value.end()) {
+                    //删除logger
+                    //并不是真正的删除logger，只是把logger的Level设很高，并清空appenders，这些是为了下个阶段把logger再添加回来
+                    auto logger = CHX_LOG_NAME(i.name);
+                    logger->setLevel((LogLevel::Level)100);
+                    logger->clearAppenders();
+                }
+            }
+            std::cout << "==============" << std::endl;
+        });
+    }
+};
+
+static LogIniter __log_init;
+
+std::string LoggerManager::toYamlString() {
+    SpinLock::SpinLockGuard guard(m_spinlock);
+    YAML::Node node;
+    for(auto& i : m_loggers) {
+        node.push_back(YAML::Load(i.second->toYamlString()));
+    }
+    std::stringstream ss;
+    ss << node;
+    return ss.str();
+}
 
 void LoggerManager::init() {
 

@@ -30,3 +30,15 @@
 2022-11-20 17:22:10	ERROR	test macro fmt error aa, 3
 2022-11-20 17:22:52	ERROR	test macro error
 2022-11-20 17:22:52	ERROR	test macro fmt error aa, 3
+2022-11-25 15:22:43	ERROR	test macro error
+2022-11-25 15:22:43	ERROR	test macro fmt error aa, 3
+2022-11-25 15:24:18	ERROR	test macro error
+2022-11-25 15:24:18	ERROR	test macro fmt error aa, 3
+2022-11-27 16:36:10	ERROR	test macro error
+2022-11-27 16:36:10	ERROR	test macro fmt error aa, 3
+2022-11-29 10:49:06	ERROR	test macro error
+2022-11-29 10:49:06	ERROR	test macro fmt error aa, 3
+2022-11-29 10:52:42	ERROR	test macro error
+2022-11-29 10:52:42	ERROR	test macro fmt error aa, 3
+2022-11-29 10:53:05	ERROR	test macro error
+2022-11-29 10:53:05	ERROR	test macro fmt error aa, 3

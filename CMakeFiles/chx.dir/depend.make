@@ -3,10 +3,16 @@
 
 CMakeFiles/chx.dir/chx/config.cc.o: chx/config.cc
 CMakeFiles/chx.dir/chx/config.cc.o: chx/config.h
+CMakeFiles/chx.dir/chx/config.cc.o: chx/lock.h
 CMakeFiles/chx.dir/chx/config.cc.o: chx/log.h
 CMakeFiles/chx.dir/chx/config.cc.o: chx/singleton.h
 CMakeFiles/chx.dir/chx/config.cc.o: chx/util.h
 
+CMakeFiles/chx.dir/chx/lock.cc.o: chx/lock.cc
+CMakeFiles/chx.dir/chx/lock.cc.o: chx/lock.h
+
+CMakeFiles/chx.dir/chx/log.cc.o: chx/config.h
+CMakeFiles/chx.dir/chx/log.cc.o: chx/lock.h
 CMakeFiles/chx.dir/chx/log.cc.o: chx/log.cc
 CMakeFiles/chx.dir/chx/log.cc.o: chx/log.h
 CMakeFiles/chx.dir/chx/log.cc.o: chx/singleton.h

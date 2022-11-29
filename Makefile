@@ -127,6 +127,19 @@ test_config/fast:
 .PHONY : test_config/fast
 
 #=============================================================================
+# Target rules for targets named test
+
+# Build rule for target.
+test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test
+.PHONY : test
+
+# fast build rule for target.
+test/fast:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
+
+#=============================================================================
 # Target rules for targets named chx
 
 # Build rule for target.
@@ -165,6 +178,33 @@ chx/config.s: chx/config.cc.s
 chx/config.cc.s:
 	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/config.cc.s
 .PHONY : chx/config.cc.s
+
+chx/lock.o: chx/lock.cc.o
+
+.PHONY : chx/lock.o
+
+# target to build an object file
+chx/lock.cc.o:
+	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/lock.cc.o
+.PHONY : chx/lock.cc.o
+
+chx/lock.i: chx/lock.cc.i
+
+.PHONY : chx/lock.i
+
+# target to preprocess a source file
+chx/lock.cc.i:
+	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/lock.cc.i
+.PHONY : chx/lock.cc.i
+
+chx/lock.s: chx/lock.cc.s
+
+.PHONY : chx/lock.s
+
+# target to generate assembly for a file
+chx/lock.cc.s:
+	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/lock.cc.s
+.PHONY : chx/lock.cc.s
 
 chx/log.o: chx/log.cc.o
 
@@ -220,6 +260,33 @@ chx/util.cc.s:
 	$(MAKE) -f CMakeFiles/chx.dir/build.make CMakeFiles/chx.dir/chx/util.cc.s
 .PHONY : chx/util.cc.s
 
+tests/test.o: tests/test.cc.o
+
+.PHONY : tests/test.o
+
+# target to build an object file
+tests/test.cc.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cc.o
+.PHONY : tests/test.cc.o
+
+tests/test.i: tests/test.cc.i
+
+.PHONY : tests/test.i
+
+# target to preprocess a source file
+tests/test.cc.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cc.i
+.PHONY : tests/test.cc.i
+
+tests/test.s: tests/test.cc.s
+
+.PHONY : tests/test.s
+
+# target to generate assembly for a file
+tests/test.cc.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/tests/test.cc.s
+.PHONY : tests/test.cc.s
+
 tests/test_config.o: tests/test_config.cc.o
 
 .PHONY : tests/test_config.o
@@ -254,18 +321,25 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
 	@echo "... test_config"
+	@echo "... edit_cache"
+	@echo "... test"
 	@echo "... chx"
 	@echo "... chx/config.o"
 	@echo "... chx/config.i"
 	@echo "... chx/config.s"
+	@echo "... chx/lock.o"
+	@echo "... chx/lock.i"
+	@echo "... chx/lock.s"
 	@echo "... chx/log.o"
 	@echo "... chx/log.i"
 	@echo "... chx/log.s"
 	@echo "... chx/util.o"
 	@echo "... chx/util.i"
 	@echo "... chx/util.s"
+	@echo "... tests/test.o"
+	@echo "... tests/test.i"
+	@echo "... tests/test.s"
 	@echo "... tests/test_config.o"
 	@echo "... tests/test_config.i"
 	@echo "... tests/test_config.s"

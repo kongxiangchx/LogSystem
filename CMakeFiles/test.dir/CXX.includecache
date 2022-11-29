@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/home/chx/workspace/chx/lock.h
+mutex
+-
+atomic
+-
+condition_variable
+-
+
 /home/chx/workspace/chx/log.h
 string
 -
@@ -27,8 +35,12 @@ stdarg.h
 -
 map
 -
+util.h
+/home/chx/workspace/chx/util.h
 singleton.h
 /home/chx/workspace/chx/singleton.h
+lock.h
+/home/chx/workspace/chx/lock.h
 
 /home/chx/workspace/chx/singleton.h
 

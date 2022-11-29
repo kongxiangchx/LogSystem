@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
+#include "lock.h"
 
 namespace chx {
     
@@ -249,6 +250,7 @@ public:
     std::string toString() override {
         try {
             //return boost::lexical_cast<std::string>(m_val);
+            RWLock::ReadLockGuard readLockGuard(m_rwlock);
             return ToStr()(m_val);
         } catch(std::exception& e) {
             CHX_LOG_ERROR(CHX_LOG_ROOT()) << "ConfigVar::toString exception"
@@ -267,38 +269,53 @@ public:
         return false;
     }
 
-    const T getValue() const { return m_val; }
+    const T getValue() {
+        RWLock::ReadLockGuard readLockGuard(m_rwlock);
+        return m_val; 
+    }
 
     void setValue(const T& v) {
-        if(v == m_val) {
-            return ;
+        {
+            RWLock::ReadLockGuard readLockGuard(m_rwlock);
+            if(v == m_val) {
+                return ;
+            }
+            for(auto& i : m_cbs) {
+                i.second(m_val, v);
+            }
         }
-        for(auto& i : m_cbs) {
-            i.second(m_val, v);
-        }
+        RWLock::WriteLockGuard writeLockGuard(m_rwlock);
         m_val = v;
     }
     std::string getTypeName() const override { return typeid(T).name(); }
 
-    void addListener(uint64_t key, on_change_cb cb) {
-        m_cbs[key] = cb;
+    uint64_t addListener(on_change_cb cb) {
+        static uint64_t s_fun_id = 0;
+        RWLock::WriteLockGuard writeLockGuard(m_rwlock);
+        ++s_fun_id;
+        m_cbs[s_fun_id] = cb;
+        return s_fun_id;
     }
 
     void delListener(uint64_t key) {
+        RWLock::WriteLockGuard writeLockGuard(m_rwlock);
         m_cbs.erase(key);
     }
 
     on_change_cb getListener(uint64_t key) {
+        RWLock::ReadLockGuard readLockGuard(m_rwlock);
         auto it = m_cbs.find(key);
         return it == m_cbs.end() ? nullptr : it->second;
     }
     void clearListener() {
+        RWLock::WriteLockGuard writeLockGuard(m_rwlock);
         m_cbs.clear();
     }
 private:
     T m_val;
     //变更回调函数组，uint64_t key, 要求唯一，一般可以用hash
     std::map<uint64_t, on_change_cb> m_cbs;
+    RWLock m_rwlock;
 };
 
 class Config {
@@ -308,8 +325,9 @@ public:
     template<class T>
     static typename ConfigVar<T>::ptr Lookup(const std::string& name,
             const T& default_value, const std::string& description = "") {
-        auto it = s_datas.find(name);
-        if(it != s_datas.end()) {
+        RWLock::WriteLockGuard writeLockGuard(GetLock());
+        auto it = GetDatas().find(name);
+        if(it != GetDatas().end()) {
             auto tmp = std::dynamic_pointer_cast<ConfigVar<T> >(it->second);
             if(tmp) {
                 CHX_LOG_INFO(CHX_LOG_ROOT()) << "Lookup name=" << name << " exists";
@@ -331,14 +349,15 @@ public:
         }
 
         typename ConfigVar<T>::ptr v(new ConfigVar<T>(name,  default_value, description));
-        s_datas[name] = v;
+        GetDatas()[name] = v;
         return v;
     }
 
     template<class T>
     static typename ConfigVar<T>::ptr Lookup(const std::string& name) {
-        auto it = s_datas.find(name);
-        if(it == s_datas.end()) {
+        RWLock::ReadLockGuard readLockGuard(GetLock());
+        auto it = GetDatas().find(name);
+        if(it == GetDatas().end()) {
             return nullptr;
         }
         return std::dynamic_pointer_cast<ConfigVar<T> >(it->second);
@@ -347,7 +366,15 @@ public:
     static void LoadFromYaml(const YAML::Node& root);
     static ConfigVarBase::ptr LookupBase(const std::string& name);
 private:
-    static ConfigVarMap s_datas;
+    static ConfigVarMap& GetDatas() {
+        static ConfigVarMap s_datas;
+        return s_datas;
+    }
+
+    static RWLock& GetLock() {
+        static RWLock s_rwlock;
+        return s_rwlock;
+    }
 };
 
 }

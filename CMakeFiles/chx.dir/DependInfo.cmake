@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/chx/workspace/chx/config.cc" "/home/chx/workspace/CMakeFiles/chx.dir/chx/config.cc.o"
+  "/home/chx/workspace/chx/lock.cc" "/home/chx/workspace/CMakeFiles/chx.dir/chx/lock.cc.o"
   "/home/chx/workspace/chx/log.cc" "/home/chx/workspace/CMakeFiles/chx.dir/chx/log.cc.o"
   "/home/chx/workspace/chx/util.cc" "/home/chx/workspace/CMakeFiles/chx.dir/chx/util.cc.o"
   )

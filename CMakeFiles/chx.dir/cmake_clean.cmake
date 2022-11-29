@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/chx.dir/chx/config.cc.o"
+  "CMakeFiles/chx.dir/chx/lock.cc.o"
   "CMakeFiles/chx.dir/chx/log.cc.o"
   "CMakeFiles/chx.dir/chx/util.cc.o"
   "lib/libchx.pdb"
