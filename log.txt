@@ -42,3 +42,5 @@
 2022-11-29 10:52:42	ERROR	test macro fmt error aa, 3
 2022-11-29 10:53:05	ERROR	test macro error
 2022-11-29 10:53:05	ERROR	test macro fmt error aa, 3
+2022-11-29 18:28:23	ERROR	test macro error
+2022-11-29 18:28:23	ERROR	test macro fmt error aa, 3

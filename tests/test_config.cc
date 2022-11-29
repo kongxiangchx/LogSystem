@@ -217,7 +217,7 @@ void test_class() {
 #endif
 static chx::Logger::ptr system_log = CHX_LOG_NAME("system");
 void test_log() {
-    YAML::Node root = YAML::LoadFile("/home/chx/workspace/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/log.yml");
     chx::Config::LoadFromYaml(root);
 }
 
@@ -229,22 +229,14 @@ void fun() {
 
 int main(int argc, char** argv) {
     test_log();
-    // std::thread thread1(fun);
-    // std::thread thread2(fun);
-    // std::thread thread3(fun);
-    // std::thread thread4(fun);
+    std::thread thread1(fun);
+    std::thread thread2(fun);
+    std::thread thread3(fun);
+    std::thread thread4(fun);
 
-    // thread1.join();
-    // thread2.join();
-    // thread3.join();
-    // thread4.join();
-    chx::Logger::ptr logger_xx = CHX_LOG_NAME("xx");
-
-    chx::Logger::ptr logger(new chx::Logger("xx"));
-    logger->addAppender(chx::LogAppender::ptr(new chx::FileLogAppender("log_xx.txt")));
-
-
-    CHX_LOG_INFO(logger_xx) << "test loger_xx";
-    CHX_LOG_INFO(logger) << "test loger";
+    thread1.join();
+    thread2.join();
+    thread3.join();
+    thread4.join();
     return 0;
 }
