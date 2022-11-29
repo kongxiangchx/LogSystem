@@ -6,7 +6,7 @@ CXX_FLAGS =  -rdynamic -O3 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-u
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/chx/Git/LogSystem/. 
 
 # Custom defines: CMakeFiles/test_config.dir/tests/test_config.cc.o_DEFINES = __FILE__="tests/test_config.cc"
 
