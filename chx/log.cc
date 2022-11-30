@@ -298,6 +298,10 @@ void Logger::clearAppenders() {
 }
 
 void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
+    // logger删除后有两个选择，一是再次使用时抛出异常，二是可以使用root进行输出
+    if(m_level == LogLevel::UNKNOW) {
+        throw std::logic_error("Logger level is UNKNOW");
+    }
     if(level >= m_level) {
         auto self = shared_from_this();
         SpinLock::SpinLockGuard guard(m_spinlock);

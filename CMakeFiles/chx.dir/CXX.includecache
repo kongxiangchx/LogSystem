@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/chx/Git/LogSystem/chx/config.cc
-config.h
-/home/chx/Git/LogSystem/chx/config.h
-
 /home/chx/Git/LogSystem/chx/config.h
 memory
 -
@@ -41,10 +37,6 @@ lock.h
 /home/chx/Git/LogSystem/chx/lock.h
 iostream
 -
-
-/home/chx/Git/LogSystem/chx/lock.cc
-lock.h
-/home/chx/Git/LogSystem/chx/lock.h
 
 /home/chx/Git/LogSystem/chx/lock.h
 mutex
@@ -97,10 +89,6 @@ lock.h
 /home/chx/Git/LogSystem/chx/lock.h
 
 /home/chx/Git/LogSystem/chx/singleton.h
-
-/home/chx/Git/LogSystem/chx/util.cc
-util.h
-/home/chx/Git/LogSystem/chx/util.h
 
 /home/chx/Git/LogSystem/chx/util.h
 stdio.h

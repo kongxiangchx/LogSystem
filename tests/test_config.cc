@@ -245,6 +245,8 @@ void test_log() {
     std::cout << "=============" << std::endl;
     std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
     std::cout << "=============" << std::endl;
+
+    // CHX_LOG_INFO(system_log) << system_log->getLevel();
 }
 
 
