@@ -308,7 +308,7 @@ void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
         }
         else if(m_root) {
             m_root->log(level, event);
-        }       
+        }
     }
 }
 
@@ -581,7 +581,7 @@ struct LogDefine {
         return name == oth.name
             && level == oth.level
             && formatter == oth.formatter
-            && appenders == appenders;
+            && appenders == oth.appenders;
     }
 
     bool operator < (const LogDefine& oth) const {
@@ -601,7 +601,7 @@ public:
             throw std::logic_error("log config name is null");
         }
         ld.name = n["name"].as<std::string>();
-        ld.level = LogLevel::FromString(n["level"].IsDefined() ? n["level"].as<std::string>() : "");
+        ld.level = LogLevel::FromString(n["level"].IsDefined() ? n["level"].as<std::string>() : "debug");
         if(n["formatter"].IsDefined()) {
             ld.formatter = n["formatter"].as<std::string>();
         }
@@ -625,11 +625,13 @@ public:
                         continue;
                     }
                     lad.file = a["file"].as<std::string>();
+                    lad.level = LogLevel::FromString(a["level"].IsDefined() ? a["level"].as<std::string>() : "debug");
                     if(a["formatter"].IsDefined()) {
                         lad.formatter = a["formatter"].as<std::string>();
                     }
                 } else if(type == "StdoutLogAppender") {
                     lad.type = 2;
+                    lad.level = LogLevel::FromString(a["level"].IsDefined() ? a["level"].as<std::string>() : "debug");
                     if(a["formatter"].IsDefined()) {
                         lad.formatter = a["formatter"].as<std::string>();
                     }
@@ -703,6 +705,9 @@ struct LogIniter {
                         //修改的logger
                         logger = CHX_LOG_NAME(i.name);
                     }
+                    else {
+                        continue;
+                    }
                 }
                 logger->setLevel(i.level);
                 if(!i.formatter.empty()) {
@@ -740,11 +745,10 @@ struct LogIniter {
                     //删除logger
                     //并不是真正的删除logger，只是把logger的Level设很高，并清空appenders，这些是为了下个阶段把logger再添加回来
                     auto logger = CHX_LOG_NAME(i.name);
-                    logger->setLevel((LogLevel::Level)100);
+                    logger->setLevel((LogLevel::Level)0);
                     logger->clearAppenders();
                 }
             }
-            std::cout << "==============" << std::endl;
         });
     }
 };

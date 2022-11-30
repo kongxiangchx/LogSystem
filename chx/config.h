@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <functional>
 #include "lock.h"
+#include <iostream>
 
 namespace chx {
     
@@ -24,7 +25,7 @@ public:
     ConfigVarBase(const std::string& name, const std::string& description = "")
         : m_name(name),
         m_description(description) {
-        std::transform(m_name.begin(), m_name.end(), m_name.begin(), ::tolower);
+        //std::transform(m_name.begin(), m_name.end(), m_name.begin(), ::tolower);
     }
     virtual ~ConfigVarBase() {}
 
@@ -271,7 +272,7 @@ public:
 
     const T getValue() {
         RWLock::ReadLockGuard readLockGuard(m_rwlock);
-        return m_val; 
+        return m_val;
     }
 
     void setValue(const T& v) {

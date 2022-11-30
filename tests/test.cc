@@ -1,37 +1,33 @@
 #include <iostream>
 #include <thread>
-#include "../chx/log.h"
-#include "../chx/util.h"
-
+#include "chx/log.h"
+#include "chx/util.h"
+#include "chx/config.h"
+#include <yaml-cpp/yaml.h>
 #include <sstream>
 #include <fstream>
+#include <thread>
+
+static chx::Logger::ptr system_log = CHX_LOG_NAME("system");
+
+void fun() {
+    while(true) {
+        CHX_LOG_INFO(system_log) << "test";
+    }
+}
 
 int main(int argc, char** argv) {
-    chx::Logger::ptr logger(new chx::Logger);
-    logger->addAppender(chx::LogAppender::ptr(new chx::StdoutLogAppender));
-    //logger->addAppender(chx::LogAppender::ptr(new chx::FileLogAppender("./log.txt")));
-
-    chx::FileLogAppender::ptr file_appender(new chx::FileLogAppender("./log.txt"));
+    YAML::Node root = YAML::LoadFile("/home/chx/workspace/bin/conf/log.yml");
+    chx::Config::LoadFromYaml(root);
     
-    chx::LogFormatter::ptr fmt(new chx::LogFormatter("%d%T%p%T%m%n"));
-    file_appender->setFormatter(fmt);
-    file_appender->setLevel(chx::LogLevel::ERROR);
+    std::thread thread1(fun);
+    std::thread thread2(fun);
+    std::thread thread3(fun);
+    std::thread thread4(fun);
 
-    logger->addAppender(file_appender);
-
-    //chx::LogEvent::ptr event(new chx::LogEvent(__FILE__, __LINE__, 0, chx::GetThreadId(), chx::GetFiberId(), time(0)));
-    //logger->log(chx::LogLevel::DEBUG, event);
-    //std::cout << "hello chx log" << std::endl;
-
-    CHX_LOG_INFO(logger) << "test macro";
-    CHX_LOG_ERROR(logger) << "test macro error";
-
-    CHX_LOG_FMT_ERROR(logger, "test macro fmt error %s, %d", "aa", 3);
-
-    auto l = chx::LoggerMgr::GetInstance()->getLogger("xx");
-    CHX_LOG_INFO(l) << "xxx";
-
-    std::stringstream m_ss;
-    m_ss << "asas" << std::endl;
+    thread1.join();
+    thread2.join();
+    thread3.join();
+    thread4.join();
     return 0;
 }

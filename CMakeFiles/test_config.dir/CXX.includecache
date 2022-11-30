@@ -6,7 +6,23 @@
 
 #IncludeRegexTransform: 
 
-/home/chx/Git/LogSystem/chx/config.h
+/home/chx/Git/LogSystem/tests/test_config.cc
+chx/config.h
+/home/chx/Git/LogSystem/tests/chx/config.h
+chx/log.h
+/home/chx/Git/LogSystem/tests/chx/log.h
+chx/lock.h
+/home/chx/Git/LogSystem/tests/chx/lock.h
+yaml-cpp/yaml.h
+/home/chx/Git/LogSystem/tests/yaml-cpp/yaml.h
+iostream
+-
+sstream
+-
+thread
+-
+
+chx/config.h
 memory
 -
 string
@@ -18,7 +34,7 @@ boost/lexical_cast.hpp
 yaml-cpp/yaml.h
 -
 log.h
-/home/chx/Git/LogSystem/chx/log.h
+chx/log.h
 vector
 -
 list
@@ -34,9 +50,11 @@ unordered_set
 functional
 -
 lock.h
-/home/chx/Git/LogSystem/chx/lock.h
+chx/lock.h
+iostream
+-
 
-/home/chx/Git/LogSystem/chx/lock.h
+chx/lock.h
 mutex
 -
 atomic
@@ -44,7 +62,7 @@ atomic
 condition_variable
 -
 
-/home/chx/Git/LogSystem/chx/log.h
+chx/log.h
 string
 -
 stdint.h
@@ -66,15 +84,15 @@ stdarg.h
 map
 -
 util.h
-/home/chx/Git/LogSystem/chx/util.h
+chx/util.h
 singleton.h
-/home/chx/Git/LogSystem/chx/singleton.h
+chx/singleton.h
 lock.h
-/home/chx/Git/LogSystem/chx/lock.h
+chx/lock.h
 
-/home/chx/Git/LogSystem/chx/singleton.h
+chx/singleton.h
 
-/home/chx/Git/LogSystem/chx/util.h
+chx/util.h
 stdio.h
 -
 pthread.h
@@ -86,21 +104,5 @@ sys/syscall.h
 unistd.h
 -
 stdint.h
--
-
-/home/chx/Git/LogSystem/tests/test_config.cc
-../chx/config.h
-/home/chx/Git/LogSystem/chx/config.h
-../chx/log.h
-/home/chx/Git/LogSystem/chx/log.h
-../chx/lock.h
-/home/chx/Git/LogSystem/chx/lock.h
-yaml-cpp/yaml.h
-/home/chx/Git/LogSystem/tests/yaml-cpp/yaml.h
-iostream
--
-sstream
--
-thread
 -
 

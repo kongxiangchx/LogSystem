@@ -1,6 +1,6 @@
-#include "../chx/config.h"
-#include "../chx/log.h"
-#include "../chx/lock.h"
+#include "chx/config.h"
+#include "chx/log.h"
+#include "chx/lock.h"
 #include "yaml-cpp/yaml.h"
 #include <iostream>
 #include <sstream>
@@ -215,28 +215,42 @@ void test_class() {
     CHX_LOG_INFO(CHX_LOG_ROOT()) << "after: " << g_person_vec_map->toString();
 }
 #endif
+
+
 static chx::Logger::ptr system_log = CHX_LOG_NAME("system");
+static chx::Logger::ptr xx_log = CHX_LOG_NAME("xx");
 void test_log() {
+    xx_log->addAppender(chx::LogAppender::ptr(new chx::StdoutLogAppender));
+    CHX_LOG_INFO(system_log) << "hello system" << std::endl;
+    std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+
     YAML::Node root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/log.yml");
     chx::Config::LoadFromYaml(root);
+
+    std::cout << "=============" << std::endl;
+    std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+    std::cout << "=============" << std::endl;
+    std::cout << root << std::endl;
+    CHX_LOG_INFO(system_log) << "hello system" << std::endl;
+
+    //system_log->setFormatter("%d - %m%n");
+    //CHX_LOG_INFO(system_log) << "hello system" << std::endl;
+
+    // std::cout << "=============" << std::endl;
+    // std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+    // std::cout << "=============" << std::endl;
+
+    root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/log1.yml");
+    chx::Config::LoadFromYaml(root);
+    std::cout << "=============" << std::endl;
+    std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+    std::cout << "=============" << std::endl;
 }
 
-void fun() {
-    while(true) {
-        CHX_LOG_INFO(system_log) << "test";
-    }
-}
+
 
 int main(int argc, char** argv) {
     test_log();
-    std::thread thread1(fun);
-    std::thread thread2(fun);
-    std::thread thread3(fun);
-    std::thread thread4(fun);
-
-    thread1.join();
-    thread2.join();
-    thread3.join();
-    thread4.join();
+    
     return 0;
 }

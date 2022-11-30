@@ -39,6 +39,8 @@ functional
 -
 lock.h
 /home/chx/Git/LogSystem/chx/lock.h
+iostream
+-
 
 /home/chx/Git/LogSystem/chx/lock.cc
 lock.h
