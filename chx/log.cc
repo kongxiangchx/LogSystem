@@ -504,8 +504,7 @@ void LogFormatter::init() {
     //%n -- 回车换行
     //%d -- 时间戳
     //%f -- 文件名
-    //%l -- 行号 
-    //%t -- TAB
+    //%l -- 行号
     static std::map<std::string, std::function<FormatItem::ptr(const std::string& str)> > s_format_items = {
 #define XX(str, C) \
         {#str, [](const std::string& fmt) { return FormatItem::ptr(new C(fmt));}}
