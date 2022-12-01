@@ -73,7 +73,7 @@ void dfs_yaml(YAML::Node node) {
 }
 
 void test_yaml() {
-    YAML::Node root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/test.yml");
+    YAML::Node root = YAML::LoadFile("/home/chx/Git/MyLog/bin/conf/test.yml");
     //std::cout<<root<<std::endl;
     chx::Config::LoadFromYaml(root);
     //print_yaml(root, 0);
@@ -111,7 +111,7 @@ void test_config() {
     XX_M(g_str_int_map_value_config, str_int_map, before);
     XX_M(g_str_int_umap_value_config, str_int_umap, before);
 
-    YAML::Node root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/test.yml");
+    YAML::Node root = YAML::LoadFile("/home/chx/Git/MyLog/bin/conf/test.yml");
     chx::Config::LoadFromYaml(root);
 
     CHX_LOG_INFO(CHX_LOG_ROOT()) << "after:" << g_int_value_config->getValue();
@@ -207,7 +207,7 @@ void test_class() {
     CHX_LOG_INFO(CHX_LOG_ROOT()) << "before: " << g_person_vec_map->toString();
     
 
-    YAML::Node root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/test.yml");
+    YAML::Node root = YAML::LoadFile("/home/chx/Git/MyLog/bin/conf/test.yml");
     chx::Config::LoadFromYaml(root);
 
     CHX_LOG_INFO(CHX_LOG_ROOT()) << "after: " << g_person->getValue().toString() << " - " << g_person->toString();
@@ -224,7 +224,7 @@ void test_log() {
     CHX_LOG_INFO(system_log) << "hello system" << std::endl;
     std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
 
-    YAML::Node root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/chx/Git/MyLog/bin/conf/log.yml");
     chx::Config::LoadFromYaml(root);
 
     std::cout << "=============" << std::endl;
@@ -240,7 +240,7 @@ void test_log() {
     // std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;
     // std::cout << "=============" << std::endl;
 
-    root = YAML::LoadFile("/home/chx/Git/LogSystem/bin/conf/log1.yml");
+    root = YAML::LoadFile("/home/chx/Git/MyLog/bin/conf/log1.yml");
     chx::Config::LoadFromYaml(root);
     std::cout << "=============" << std::endl;
     std::cout << chx::LoggerMgr::GetInstance()->toYamlString() << std::endl;

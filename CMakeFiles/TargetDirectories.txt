@@ -1,5 +1,5 @@
-/home/chx/Git/LogSystem/CMakeFiles/rebuild_cache.dir
-/home/chx/Git/LogSystem/CMakeFiles/test_config.dir
-/home/chx/Git/LogSystem/CMakeFiles/edit_cache.dir
-/home/chx/Git/LogSystem/CMakeFiles/test.dir
-/home/chx/Git/LogSystem/CMakeFiles/chx.dir
+/home/chx/Git/MyLog/CMakeFiles/rebuild_cache.dir
+/home/chx/Git/MyLog/CMakeFiles/test_config.dir
+/home/chx/Git/MyLog/CMakeFiles/edit_cache.dir
+/home/chx/Git/MyLog/CMakeFiles/test.dir
+/home/chx/Git/MyLog/CMakeFiles/chx.dir

@@ -17,7 +17,7 @@ void fun() {
 }
 
 int main(int argc, char** argv) {
-    YAML::Node root = YAML::LoadFile("/home/chx/workspace/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/chx/Git/MyLog/bin/conf/log.yml");
     chx::Config::LoadFromYaml(root);
     
     std::thread thread1(fun);

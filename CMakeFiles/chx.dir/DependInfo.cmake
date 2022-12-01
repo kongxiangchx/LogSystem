@@ -4,10 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/chx/Git/LogSystem/chx/config.cc" "/home/chx/Git/LogSystem/CMakeFiles/chx.dir/chx/config.cc.o"
-  "/home/chx/Git/LogSystem/chx/lock.cc" "/home/chx/Git/LogSystem/CMakeFiles/chx.dir/chx/lock.cc.o"
-  "/home/chx/Git/LogSystem/chx/log.cc" "/home/chx/Git/LogSystem/CMakeFiles/chx.dir/chx/log.cc.o"
-  "/home/chx/Git/LogSystem/chx/util.cc" "/home/chx/Git/LogSystem/CMakeFiles/chx.dir/chx/util.cc.o"
+  "/home/chx/Git/MyLog/chx/config.cc" "/home/chx/Git/MyLog/CMakeFiles/chx.dir/chx/config.cc.o"
+  "/home/chx/Git/MyLog/chx/lock.cc" "/home/chx/Git/MyLog/CMakeFiles/chx.dir/chx/lock.cc.o"
+  "/home/chx/Git/MyLog/chx/log.cc" "/home/chx/Git/MyLog/CMakeFiles/chx.dir/chx/log.cc.o"
+  "/home/chx/Git/MyLog/chx/util.cc" "/home/chx/Git/MyLog/CMakeFiles/chx.dir/chx/util.cc.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

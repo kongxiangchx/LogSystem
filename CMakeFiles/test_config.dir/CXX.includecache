@@ -6,15 +6,15 @@
 
 #IncludeRegexTransform: 
 
-/home/chx/Git/LogSystem/tests/test_config.cc
+/home/chx/Git/MyLog/tests/test_config.cc
 chx/config.h
-/home/chx/Git/LogSystem/tests/chx/config.h
+/home/chx/Git/MyLog/tests/chx/config.h
 chx/log.h
-/home/chx/Git/LogSystem/tests/chx/log.h
+/home/chx/Git/MyLog/tests/chx/log.h
 chx/lock.h
-/home/chx/Git/LogSystem/tests/chx/lock.h
+/home/chx/Git/MyLog/tests/chx/lock.h
 yaml-cpp/yaml.h
-/home/chx/Git/LogSystem/tests/yaml-cpp/yaml.h
+/home/chx/Git/MyLog/tests/yaml-cpp/yaml.h
 iostream
 -
 sstream

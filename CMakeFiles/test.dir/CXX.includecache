@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/chx/Git/LogSystem/tests/test.cc
+/home/chx/Git/MyLog/tests/test.cc
 iostream
 -
 thread
 -
 chx/log.h
-/home/chx/Git/LogSystem/tests/chx/log.h
+/home/chx/Git/MyLog/tests/chx/log.h
 chx/util.h
-/home/chx/Git/LogSystem/tests/chx/util.h
+/home/chx/Git/MyLog/tests/chx/util.h
 chx/config.h
-/home/chx/Git/LogSystem/tests/chx/config.h
+/home/chx/Git/MyLog/tests/chx/config.h
 yaml-cpp/yaml.h
 -
 sstream
