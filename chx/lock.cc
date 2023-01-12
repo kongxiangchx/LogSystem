@@ -1,9 +1,19 @@
 #include "lock.h"
+#include <unistd.h>
+
+#define spinMaxCnt 10
 
 namespace chx {
 
 void SpinLock::lock() {
-    while(flag.test_and_set(std::memory_order_acquire));
+    uint32_t cnt = 0;
+    while(flag.test_and_set(std::memory_order_acquire)) {
+        cnt++;
+        if(cnt >= spinMaxCnt) {
+            cnt = 0;
+            sleep(0);
+        }
+    }
 }
 void SpinLock::unlock() {
     flag.clear(std::memory_order_release);

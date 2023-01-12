@@ -10,8 +10,10 @@
 
 static chx::Logger::ptr system_log = CHX_LOG_NAME("system");
 
+bool flag = true;
+
 void fun() {
-    while(true) {
+    while(flag) {
         CHX_LOG_INFO(system_log) << "test";
     }
 }
@@ -24,6 +26,9 @@ int main(int argc, char** argv) {
     std::thread thread2(fun);
     std::thread thread3(fun);
     std::thread thread4(fun);
+    
+    sleep(1);
+    flag = false;
 
     thread1.join();
     thread2.join();
